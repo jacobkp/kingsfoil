@@ -17,8 +17,11 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Medical Bill Analyzer",
+  title: "Kingsfoil: Medical Bill Analyser",
   description: "AI-powered medical bill analysis to detect errors and save money",
+  icons: {
+    icon: '/images/favicon.png',
+  },
 };
 
 export default function RootLayout({

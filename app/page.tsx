@@ -306,6 +306,15 @@ export default function Home() {
             🔜 Coming Soon: Direct API access and auto-pull from insurance providers
           </span>
         </div>
+
+        {/* HIPAA Disclaimer */}
+        <div className="mt-4 text-center">
+          <div className="inline-block max-w-2xl px-4 py-3 rounded-lg bg-orange-50 border border-orange-200">
+            <p className="text-xs text-orange-800">
+              <span className="font-semibold">Early prototype version.</span> Data not protected completely via HIPAA. We do not store or retain any uploaded information on our servers.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
