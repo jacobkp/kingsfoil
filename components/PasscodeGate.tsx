@@ -48,7 +48,7 @@ export default function PasscodeGate({ onSuccess }: PasscodeGateProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
         {/* Logo */}
         <div className="flex justify-center mb-6">
@@ -85,7 +85,7 @@ export default function PasscodeGate({ onSuccess }: PasscodeGateProps) {
               }}
               placeholder="Enter access code"
               autoFocus
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A6354] focus:border-[#1A6354] outline-none transition-colors text-gray-900 placeholder:text-gray-400"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function PasscodeGate({ onSuccess }: PasscodeGateProps) {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="w-full bg-[#1A6354] text-white py-3 rounded-lg font-medium hover:bg-[#0f4a3f] transition-colors focus:ring-2 focus:ring-[#1A6354] focus:ring-offset-2"
           >
             Access App
           </button>
