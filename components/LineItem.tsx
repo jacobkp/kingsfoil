@@ -13,7 +13,7 @@ export default function LineItem({ item, errors }: LineItemProps) {
 
   // Find errors affecting this line
   const lineErrors = errors.filter(error =>
-    error.affected_lines.includes(item.line_number)
+    error.affected_lines?.includes(item.line_number) ?? false
   );
 
   const hasErrors = lineErrors.length > 0;
@@ -106,14 +106,14 @@ export default function LineItem({ item, errors }: LineItemProps) {
       {showErrorDetails && hasErrors && (
         <div className="border-t border-red-200 bg-white p-4 mx-4 mb-4 rounded shadow-lg">
           {lineErrors.map((error, idx) => (
-            <div key={error.id} className={idx > 0 ? 'mt-4 pt-4 border-t' : ''}>
+            <div key={error.error_id} className={idx > 0 ? 'mt-4 pt-4 border-t' : ''}>
               <div className="flex items-start gap-2 mb-2">
                 <span className="text-red-600 text-lg">⚠️</span>
                 <div className="flex-1">
                   <h4 className="font-bold text-red-700 uppercase text-sm">
-                    {error.title}
+                    {error.full_title}
                   </h4>
-                  <p className="text-gray-700 text-sm mt-2">{error.explanation}</p>
+                  <p className="text-gray-700 text-sm mt-2">{error.detailed_explanation}</p>
 
                   {error.potential_savings > 0 && (
                     <p className="text-green-700 font-bold text-sm mt-2">
