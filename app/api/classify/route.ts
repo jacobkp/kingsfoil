@@ -173,44 +173,164 @@ const EOB_INDICATORS = {
 
 // STRONG NEGATIVE INDICATORS - Immediate disqualification if 2+ found
 const STRONG_NEGATIVE_INDICATORS = [
-  'construction',
-  'contractor',
-  'chapter',
-  'isbn',
-  'copyright',
-  'restaurant',
-  'menu',
-  'mortgage',
-  'lease agreement',
-  'rental agreement',
-  'plumbing',
-  'electrical',
-  'roofing',
-  'automotive',
-  'car repair',
-  'home improvement',
-  'landscaping',
-  'real estate',
-  'property tax',
+  // ═══════════════════════════════════════════════════════════════════
+  // VETERINARY / ANIMAL CARE
+  // ═══════════════════════════════════════════════════════════════════
+  'animal hospital',
+  'veterinary',
+  'veterinarian',
+  'vet clinic',
+  'puppy',
+  'kitten',
+  'canine',
+  'feline',
+  'neutering',
+  'spaying',
+  'rabies vaccine',
+  'heartworm',
+  'pet boarding',
+  'grooming',
+  'animal care',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // DENTAL (standalone dental offices - not medical)
+  // ═══════════════════════════════════════════════════════════════════
+  'dental office',
+  'dentist',
+  'orthodontist',
+  'root canal',
+  'braces',
+  'dental cleaning',
+  'teeth whitening',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // LEGAL / ATTORNEY
+  // ═══════════════════════════════════════════════════════════════════
+  'attorney',
+  'law firm',
+  'legal services',
+  'retainer',
+  'billable hours',
+  'court filing',
+  'legal fee',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // AUTO / HOME / PROPERTY INSURANCE
+  // ═══════════════════════════════════════════════════════════════════
+  'auto insurance',
+  'car insurance',
+  'homeowners insurance',
+  'collision',
+  'comprehensive coverage',
+  'property damage',
+  'adjuster',
+  'claim settlement',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // UTILITIES / TELECOM
+  // ═══════════════════════════════════════════════════════════════════
+  'electric bill',
+  'gas bill',
+  'water bill',
   'utility bill',
   'phone bill',
   'internet bill',
   'cable bill',
+  'kwh',
+  'therms',
+  'usage meter',
+  'broadband',
+  'data plan',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // EDUCATION / TUITION
+  // ═══════════════════════════════════════════════════════════════════
+  'tuition',
+  'enrollment fee',
+  'semester',
+  'student account',
+  'financial aid',
+  'course fee',
+  'lab fee',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // GYM / MEMBERSHIP
+  // ═══════════════════════════════════════════════════════════════════
+  'membership fee',
+  'annual dues',
+  'fitness center',
+  'gym membership',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // INTERNATIONAL / NON-US
+  // ═══════════════════════════════════════════════════════════════════
+  'gst no',
+  'vat number',
+  'goods and services tax',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // E-COMMERCE / RETAIL / SHIPPING
+  // ═══════════════════════════════════════════════════════════════════
+  'shipping address',
+  'billing address',
+  'shipment',
+  'tracking number',
+  'order confirmation',
+  'retail',
+  'wholesale',
+  'manufacturer',
   'bottle',
   'jar',
   'packaging',
   'glass container',
   'metal lid',
-  'shipment',
-  'gst no',
-  'shipping address',
-  'billing address',
   'furniture',
   'electronics',
   'appliance',
-  'retail',
-  'wholesale',
-  'manufacturer',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CONSTRUCTION / HOME SERVICES
+  // ═══════════════════════════════════════════════════════════════════
+  'construction',
+  'contractor',
+  'plumbing',
+  'electrical',
+  'roofing',
+  'home improvement',
+  'landscaping',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // REAL ESTATE / MORTGAGE
+  // ═══════════════════════════════════════════════════════════════════
+  'real estate',
+  'property tax',
+  'mortgage',
+  'lease agreement',
+  'rental agreement',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // RESTAURANT / FOOD SERVICE
+  // ═══════════════════════════════════════════════════════════════════
+  'restaurant',
+  'menu',
+  'food service',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // BOOKS / PUBLICATIONS
+  // ═══════════════════════════════════════════════════════════════════
+  'chapter',
+  'isbn',
+  'copyright',
+  'publisher',
+
+  // ═══════════════════════════════════════════════════════════════════
+  // AUTOMOTIVE
+  // ═══════════════════════════════════════════════════════════════════
+  'automotive',
+  'car repair',
+  'oil change',
+  'tire rotation',
+  'auto body',
 ];
 
 // REQUIRED ELEMENTS - Medical document must have at least 3 of 4 categories

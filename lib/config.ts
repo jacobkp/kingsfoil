@@ -53,9 +53,9 @@ export const MODELS = {
  * Adjust these based on your needs and cost considerations.
  */
 export const TOKEN_LIMITS = {
-  VISION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_VISION || '4096'),
-  ANALYSIS: parseInt(process.env.ANTHROPIC_MAX_TOKENS_ANALYSIS || '32768'),
-  EXPLANATION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_EXPLANATION || '2048'),
+  VISION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_VISION || '8192'),
+  ANALYSIS: parseInt(process.env.ANTHROPIC_MAX_TOKENS_ANALYSIS || '65536'),
+  EXPLANATION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_EXPLANATION || '4096'),
 };
 
 /**
