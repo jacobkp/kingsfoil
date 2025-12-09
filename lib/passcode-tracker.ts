@@ -1,4 +1,6 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = Redis.fromEnv();
 
 const UPLOAD_LIMIT = 10; // Maximum uploads per passcode
 
@@ -8,7 +10,7 @@ export async function trackAndValidateUpload(passcode: string) {
   const today = new Date().toISOString().split('T')[0];
 
   // Get current total
-  const totalUploads = (await kv.get<number>(totalKey)) || 0;
+  const totalUploads = (await redis.get<number>(totalKey)) || 0;
 
   // Check total limit
   if (totalUploads >= UPLOAD_LIMIT) {
@@ -16,10 +18,10 @@ export async function trackAndValidateUpload(passcode: string) {
   }
 
   // Increment total counter
-  await kv.incr(totalKey);
+  await redis.incr(totalKey);
 
   // Track by date (for pattern analysis)
-  await kv.hincrby(dailyKey, today, 1);
+  await redis.hincrby(dailyKey, today, 1);
 
   return { allowed: true, total: totalUploads + 1, limit: UPLOAD_LIMIT };
 }
@@ -31,18 +33,18 @@ export async function trackLogin(passcode: string) {
   const today = new Date().toISOString().split('T')[0];
 
   // Increment total logins
-  await kv.incr(loginKey);
+  await redis.incr(loginKey);
 
   // Update last used timestamp
-  await kv.set(lastUsedKey, new Date().toISOString());
+  await redis.set(lastUsedKey, new Date().toISOString());
 
   // Track daily logins
-  await kv.hincrby(dailyLoginsKey, today, 1);
+  await redis.hincrby(dailyLoginsKey, today, 1);
 }
 
 export async function getUploadCount(passcode: string) {
   const totalKey = `passcode:${passcode}:total_uploads`;
-  const totalUploads = (await kv.get<number>(totalKey)) || 0;
+  const totalUploads = (await redis.get<number>(totalKey)) || 0;
 
   return {
     used: totalUploads,
@@ -57,11 +59,11 @@ export async function getAllStats() {
 
   for (const passcode of passcodes) {
     // Get all data for this passcode
-    const totalLogins = (await kv.get<number>(`passcode:${passcode}:logins`)) || 0;
-    const totalUploads = (await kv.get<number>(`passcode:${passcode}:total_uploads`)) || 0;
-    const lastUsed = (await kv.get<string>(`passcode:${passcode}:last_used`)) || null;
-    const uploadsByDate = (await kv.hgetall(`passcode:${passcode}:uploads_by_date`)) || {};
-    const loginsByDate = (await kv.hgetall(`passcode:${passcode}:logins_by_date`)) || {};
+    const totalLogins = (await redis.get<number>(`passcode:${passcode}:logins`)) || 0;
+    const totalUploads = (await redis.get<number>(`passcode:${passcode}:total_uploads`)) || 0;
+    const lastUsed = (await redis.get<string>(`passcode:${passcode}:last_used`)) || null;
+    const uploadsByDate = (await redis.hgetall(`passcode:${passcode}:uploads_by_date`)) || {};
+    const loginsByDate = (await redis.hgetall(`passcode:${passcode}:logins_by_date`)) || {};
 
     const uploadDays = Object.keys(uploadsByDate).length;
     const loginDays = Object.keys(loginsByDate).length;
