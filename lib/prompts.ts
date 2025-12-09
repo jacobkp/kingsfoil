@@ -16,8 +16,40 @@ IMPORTANT: Return ONLY valid JSON, no markdown, no explanation.
 
 IMPORTANT: Preserve document header text and notices for classification purposes.
 
+DOCUMENT TYPE CLASSIFICATION:
+Before extracting data, classify this document as one of:
+- MEDICAL_BILL: Bill from healthcare provider requesting payment
+- EOB: Explanation of Benefits from insurance company
+- INVALID: Not a medical document (veterinary, dental, retail, etc.)
+
+CLASSIFICATION RULES:
+MEDICAL_BILL indicators:
+  - "Patient Statement", "Amount Due", "Balance Due", "Payment Due"
+  - Provider/hospital name with billing info
+  - CPT/HCPCS codes with charges
+  - NPI number present
+
+EOB indicators:
+  - "This is not a bill", "Explanation of Benefits"
+  - Insurance company letterhead (Aetna, UnitedHealthcare, etc.)
+  - "Plan Paid", "What You May Owe", "Claim Summary"
+  - Member ID format typical of insurance
+
+INVALID indicators (2+ = INVALID):
+  - Veterinary/animal terms (species, canine, feline, neutering)
+  - Dental office (dentist, orthodontist, dental cleaning)
+  - Legal/attorney services
+  - Utility bills, retail invoices, education/tuition
+  - Non-medical products (bottles, jars, furniture)
+
 Extract:
 {
+  "document_type_hint": {
+    "type": "MEDICAL_BILL | EOB | INVALID",
+    "confidence": 0-100,
+    "reasoning": "Brief explanation of why you classified it this way (1-2 sentences)",
+    "key_indicators": ["list", "of", "specific", "phrases", "or", "features", "you", "noticed"]
+  },
   "document_header_text": "string - Full text from document header including any notices like 'Explanation of Benefits', 'This is not a bill', 'Patient Statement', etc. Include ALL header and footer text.",
   "provider": {
     "name": "string",

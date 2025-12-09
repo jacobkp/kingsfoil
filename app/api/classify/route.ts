@@ -180,6 +180,7 @@ const STRONG_NEGATIVE_INDICATORS = [
   'veterinary',
   'veterinarian',
   'vet clinic',
+  'species',
   'puppy',
   'kitten',
   'canine',
@@ -455,7 +456,7 @@ function findMatches(text: string, terms: string[]): string[] {
   return terms.filter((term) => text.includes(term.toLowerCase()));
 }
 
-function classifyDocument(extractedText: string): ClassificationMatrix {
+function classifyDocument(extractedText: string, aiHint?: any): ClassificationMatrix {
   const text = extractedText.toLowerCase();
 
   // Initialize matrix
@@ -653,7 +654,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('[API /classify] Request received');
     const body = await request.json();
-    const { extracted_text } = body;
+    const { extracted_text, ai_hint } = body;
 
     if (!extracted_text) {
       console.error('[API /classify] ERROR: No extracted text provided');
@@ -661,9 +662,13 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[API /classify] Classifying document (text length:', extracted_text.length, 'chars)');
+    if (ai_hint) {
+      console.log('[API /classify] AI hint:', ai_hint.type, `(${ai_hint.confidence}% confidence)`);
+      console.log('[API /classify] AI reasoning:', ai_hint.reasoning);
+    }
 
     // Run deterministic classification
-    const matrix = classifyDocument(extracted_text);
+    const matrix = classifyDocument(extracted_text, ai_hint);
 
     // Log classification matrix (dev mode logging)
     console.log('\n[API /classify] ═══════════════════════════════════════════════════════');

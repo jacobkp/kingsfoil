@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBillData } from '@/lib/BillContext';
 import ProcessingStep from '@/components/ProcessingStep';
@@ -53,6 +53,10 @@ export default function AnalyzingPage() {
   const [error, setError] = useState<string | null>(null);
   const [showEOBWarning, setShowEOBWarning] = useState(false);
   const [eobClassification, setEobClassification] = useState<DocumentClassification | null>(null);
+  // Cache extracted data so we don't re-extract when user continues with EOB
+  const [cachedExtractedData, setCachedExtractedData] = useState<any>(null);
+  // Prevent double execution in React Strict Mode
+  const processingStarted = useRef(false);
 
   useEffect(() => {
     // Redirect if no file
@@ -60,6 +64,13 @@ export default function AnalyzingPage() {
       router.push('/');
       return;
     }
+
+    // Prevent double execution (React Strict Mode calls useEffect twice in dev)
+    if (processingStarted.current) {
+      console.log('[Processing] Skipping duplicate execution (Strict Mode)');
+      return;
+    }
+    processingStarted.current = true;
 
     // Start processing
     processBill();
@@ -99,7 +110,7 @@ export default function AnalyzingPage() {
       setCurrentStepIndex(1);
 
       console.log('[Step 2/5] Classifying document type...');
-      const classification = await classifyDocument(extracted_text);
+      const classification = await classifyDocument(extracted_text, extractedData.document_type_hint);
       console.log('[Step 2/5] Classification result:', classification.type, `(confidence: ${classification.confidence}%)`);
 
       // Check if document can be analyzed
@@ -111,6 +122,8 @@ export default function AnalyzingPage() {
       // If EOB detected, show warning and pause
       if (classification.type === 'EOB') {
         console.warn('[Step 2/5] EOB detected - pausing for user decision');
+        // Cache the extracted data so we don't need to re-extract if user continues
+        setCachedExtractedData(extractedData);
         setEobClassification(classification);
         setShowEOBWarning(true);
         setSteps((prev) =>
@@ -219,11 +232,14 @@ export default function AnalyzingPage() {
     return { data: result.data, extracted_text: result.extracted_text };
   };
 
-  const classifyDocument = async (extractedText: string): Promise<DocumentClassification> => {
+  const classifyDocument = async (extractedText: string, aiHint?: any): Promise<DocumentClassification> => {
     const response = await fetch('/api/classify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ extracted_text: extractedText }),
+      body: JSON.stringify({
+        extracted_text: extractedText,
+        ai_hint: aiHint // Pass AI classification hint from Vision API
+      }),
     });
 
     const result = await response.json();
@@ -275,17 +291,20 @@ export default function AnalyzingPage() {
   };
 
   const continueWithEOB = async () => {
-    if (!eobClassification) return;
+    if (!eobClassification || !cachedExtractedData) return;
 
+    console.log('[EOB Continue] User chose to continue with EOB analysis');
     setShowEOBWarning(false);
     setProgress(30);
 
     // Store classification in context
     updateBillData({ classification: eobClassification });
 
-    // Continue with the rest of the processing
+    // Continue with the rest of the processing using cached data
     try {
-      const { data: extractedData, extracted_text } = await extractBillData();
+      // Use the cached extracted data instead of re-extracting
+      const extractedData = cachedExtractedData;
+      console.log('[EOB Continue] Using cached extraction with', extractedData.line_items.length, 'line items');
 
       // Step 3: Explain line items
       setSteps((prev) =>
@@ -293,6 +312,7 @@ export default function AnalyzingPage() {
       );
       setCurrentStepIndex(2);
 
+      console.log('[Step 3/5] Explaining line items for EOB...');
       const explanations = await explainLineItems(extractedData.line_items);
 
       const enrichedBill = {

@@ -54,7 +54,8 @@ export const MODELS = {
  */
 export const TOKEN_LIMITS = {
   VISION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_VISION || '8192'),
-  ANALYSIS: parseInt(process.env.ANTHROPIC_MAX_TOKENS_ANALYSIS || '65536'),
+  // Note: claude-sonnet-4-5 max output is 64000, but 16384 is sufficient for analysis
+  ANALYSIS: parseInt(process.env.ANTHROPIC_MAX_TOKENS_ANALYSIS || '16384'),
   EXPLANATION: parseInt(process.env.ANTHROPIC_MAX_TOKENS_EXPLANATION || '4096'),
 };
 

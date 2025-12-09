@@ -37,7 +37,15 @@ export interface LineItem {
   plain_english_explanation?: string; // Added after explanation API call
 }
 
+export interface DocumentTypeHint {
+  type: 'MEDICAL_BILL' | 'EOB' | 'INVALID';
+  confidence: number; // 0-100
+  reasoning: string;
+  key_indicators: string[];
+}
+
 export interface ExtractedBill {
+  document_type_hint?: DocumentTypeHint; // AI classification hint from Vision API
   document_header_text?: string; // Full header/footer text for classification
   provider: Provider;
   patient: Patient;
