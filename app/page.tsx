@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, DragEvent } from 'react';
+import { useState, useRef, DragEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useBillData } from '@/lib/BillContext';
 import Image from 'next/image';
@@ -26,7 +26,23 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [userContext, setUserContext] = useState('');
   const [showExamples, setShowExamples] = useState(false);
+  const [uploadQuota, setUploadQuota] = useState<{ used: number; remaining: number; limit: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch upload quota on mount
+  useEffect(() => {
+    const passcode = sessionStorage.getItem('passcode_used');
+    if (passcode) {
+      fetch('/api/passcode/get-upload-count', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode }),
+      })
+        .then((res) => res.json())
+        .then((data) => setUploadQuota(data))
+        .catch((err) => console.error('Failed to fetch upload quota:', err));
+    }
+  }, []);
 
   const handleFileSelect = (file: File) => {
     setError(null);
@@ -83,7 +99,37 @@ export default function Home() {
   const handleAnalyzeBill = async () => {
     if (!selectedFile) return;
 
+    // Check upload quota
+    if (uploadQuota && uploadQuota.remaining <= 0) {
+      setError('Upload limit reached. Please contact support for additional uploads.');
+      return;
+    }
+
     setUploading(true);
+    setError(null);
+
+    // Validate and track upload
+    const passcode = sessionStorage.getItem('passcode_used');
+    if (passcode) {
+      try {
+        const response = await fetch('/api/passcode/validate-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ passcode }),
+        });
+
+        const result = await response.json();
+
+        if (!result.allowed) {
+          setError(`Upload limit reached (${result.total}/${result.limit}). Please contact support.`);
+          setUploading(false);
+          return;
+        }
+      } catch (err) {
+        console.error('Failed to validate upload:', err);
+        // Continue anyway if validation fails
+      }
+    }
 
     // Store file and user context in context
     updateBillData({

@@ -3,18 +3,11 @@
 import { useState, FormEvent } from 'react';
 import Image from 'next/image';
 
-const VALID_PASSCODES = [
-  'athelas',
-  'miruvor',
-  'lembas',
-  'mithrandir',
-  'earendil',
-  'elendil',
-  'telperion',
-  'laurelin',
-  'silmaril',
-  'anduril',
-];
+// Load passcodes from environment variable
+const VALID_PASSCODES = (process.env.NEXT_PUBLIC_VALID_PASSCODES || '')
+  .split(',')
+  .map(p => p.trim().toLowerCase())
+  .filter(p => p.length > 0);
 
 interface PasscodeGateProps {
   onSuccess: () => void;
@@ -24,7 +17,7 @@ export default function PasscodeGate({ onSuccess }: PasscodeGateProps) {
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const normalizedPasscode = passcode.trim().toLowerCase();
@@ -32,7 +25,14 @@ export default function PasscodeGate({ onSuccess }: PasscodeGateProps) {
     if (VALID_PASSCODES.includes(normalizedPasscode)) {
       // Store authorization in sessionStorage
       sessionStorage.setItem('authorized', 'true');
-      sessionStorage.setItem('passcode_used', passcode.trim());
+      sessionStorage.setItem('passcode_used', normalizedPasscode);
+
+      // Track login (fire and forget)
+      fetch('/api/passcode/track-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode: normalizedPasscode }),
+      }).catch(err => console.error('Failed to track login:', err));
 
       // Clear error and input
       setError('');
